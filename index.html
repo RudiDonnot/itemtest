@@ -4,7 +4,11 @@
   <head lang="en">
     <meta charset="utf-8" />
     <title>My first three.js app</title>
-    <link rel="stylesheet" href="./public/src/style.css">
+    <style>
+      body {
+        margin: 0;
+      }
+    </style>
     <!-- 
 			Import map is not available in all browsers.
 			This is necessary to serve the three path so that other imports can access it. 
@@ -20,6 +24,6 @@
   <body>
     <!-- Canvas is necessary to hold a scene  -->
     <canvas id="background"></canvas>
-    <script type="module" src="./public/src/main.js" defer></script>
+    <script type="module" src="/public/src/main.js"></script>
   </body>
 </html>

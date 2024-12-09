@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import { OrbitControls } from "../../node_modules/three/examples/jsm/controls/OrbitControls.js";
 import { LoadGLTFByPath } from "./Helpers/ModelHelper.js";
 
 // Renderer configuration
@@ -16,14 +17,13 @@ renderer.outputColorSpace = THREE.SRGBColorSpace;
 // Scene and camera setup
 const scene = new THREE.Scene();
 let camera;
-let model; // To store the loaded model
+let controls;
 
 let cameraList = [];
 
 // Load the GLTF model
 LoadGLTFByPath(scene)
-  .then((loadedModel) => {
-    model = loadedModel; // Save the model for future updates
+  .then(() => {
     retrieveListOfCameras(scene);
   })
   .catch((error) => {
@@ -43,6 +43,11 @@ function retrieveListOfCameras(scene) {
     camera = cameraList[0];
     updateCameraAspect(camera);
 
+    // Initialize OrbitControls only after camera is defined
+    controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true; // Makes the rotation smoother
+    controls.dampingFactor = 0.05;
+
     // Start the animation loop after the model and cameras are loaded
     animate();
   } else {
@@ -60,6 +65,9 @@ function updateCameraAspect(camera) {
 function animate() {
   requestAnimationFrame(animate);
 
+  // Update controls in each frame
+  if (controls) controls.update();
+
   renderer.render(scene, camera);
 }
 
@@ -70,24 +78,3 @@ window.addEventListener("resize", () => {
     updateCameraAspect(camera);
   }
 });
-
-// Handle device orientation for horizontal rotation
-if (window.DeviceOrientationEvent) {
-  window.addEventListener(
-    "deviceorientation",
-    (event) => {
-      if (model) {
-        // Use the alpha value (yaw) to rotate the model
-        const alpha = event.alpha || 0;
-
-        // Convert alpha from degrees to radians and apply it to the model's rotation
-        model.rotation.y = THREE.MathUtils.degToRad(alpha);
-
-        // Optionally, you can smooth the rotation using interpolation for better UX
-      }
-    },
-    true
-  );
-} else {
-  console.error("DeviceOrientationEvent is not supported on this device/browser.");
-}
