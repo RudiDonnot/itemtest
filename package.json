@@ -1,4 +1,5 @@
 {
+  "homepage": "https://rudidonnot.github.io/itemtest",
   "scripts": {
   "start": "node app.js"
 },
